@@ -31,7 +31,7 @@
 #define AI_NETWORK_OUTPUTS_IN_ACTIVATIONS  (4)
 
 /******************************************************************************/
-#define AI_NETWORK_IN_NUM        (1)
+#define AI_NETWORK_IN_NUM        (4)
 
 AI_DEPRECATED
 #define AI_NETWORK_IN \

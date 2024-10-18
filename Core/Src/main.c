@@ -22,7 +22,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "ai_datatypes_defines.h"
+#include "ai_platform.h"
+#include "network.h"
+#include "network_data.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,6 +68,34 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	char buf[50];
+	int buf_len =0;
+	ai_error ai_err;
+	ai_i32 nbatch;
+	uint32_t timestamp;
+	float y_val;
+
+	// Chunk of memory used to hold intermediate values for neural network
+	AI_ALIGNED(4) ai_u8 activations[AI_NETWORK_DATA_ACTIVATIONS_SIZE];
+	// Chunk of memory used to hold intermediate values for neural network
+	AI_ALIGNED(4) ai_i8 in_data[AI_NETWORK_IN_1_SIZE_BYTES];
+	AI_ALIGNED(4) ai_i8 out_data[AI_NETWORK_OUT_1_SIZE_BYTES];
+	// Pointer to model
+	ai_handle network = AI_HANDLE_NULL;
+	// Init wrapper structs that hold pointers to data and info about
+	// the data (tensor height, width, channels)
+	ai_buffer ai_input[AI_NETWORK_IN_NUM] = AI_NETWORK_IN;
+	ai_buffer ai_output[AI_NETWORK_OUT_NUM] = AI_NETWORK_OUT;
+	// Set working memory and get weights/biases from model
+	ai_network_params ai_params = {
+			AI_NETWORK_DATA_WEIGHTS(ai_network_data_weights_get()),
+			AI_NETWORK_DATA_ACTIVATIONS(activations)
+	};
+	// Set pointers wrapper structs to the data buffers
+	ai_input[0].data = AI_HANDLE_PTR(in_data);
+	ai_output[0].data = AI_HANDLE_PTR(out_data);
+
+
 
   /* USER CODE END 1 */
 /* Enable the CPU Cache */
@@ -104,7 +135,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-  MX_X_CUBE_AI_Process();
+//  MX_X_CUBE_AI_Process();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
