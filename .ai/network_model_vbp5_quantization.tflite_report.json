@@ -1,7 +1,7 @@
 {
     "_allocate_inputs": 4,
     "_allocate_outputs": 4,
-    "cli_parameters": "analyze --target stm32h7 --name network -m /home/freire/Downloads/model_vbp5_quantization.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace238176381773312755322417707505939 --output /home/freire/.stm32cubemx/network_output",
+    "cli_parameters": "analyze --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5_quantization.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace313251708959095894854771633379038 --output /home/freire/.stm32cubemx/network_output",
     "cli_version": {
         "extra": "19895",
         "major": 1,
@@ -11,7 +11,7 @@
     "cli_version_str": "1.0.0-19895",
     "code_size": 0,
     "compression": [],
-    "date_time": "2024-10-18T15:20:27-0300",
+    "date_time": "2024-10-21T16:41:00-0300",
     "error": 0,
     "error_str": [],
     "exec_cmd": "analyze",
@@ -435,7 +435,7 @@
         }
     ],
     "model_files": [
-        "/home/freire/Downloads/model_vbp5_quantization.tflite"
+        "/home/freire/experiments/cube-experiments/neural-network-app/model_vbp5_quantization.tflite"
     ],
     "model_n_params": 50305,
     "model_name": "model_vbp5_quantization",

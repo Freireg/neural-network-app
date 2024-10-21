@@ -1,0 +1,5 @@
+../Core/Src/main.c:85:5:aiInit	24	static
+../Core/Src/main.c:105:5:aiRun	8	static
+../Core/Src/main.c:186:6:SystemClock_Config	128	static,ignoring_inline_asm
+../Core/Src/main.c:128:5:main	16	static,ignoring_inline_asm
+../Core/Src/main.c:265:6:Error_Handler	0	static,ignoring_inline_asm

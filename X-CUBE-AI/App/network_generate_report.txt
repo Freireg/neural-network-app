@@ -1,30 +1,30 @@
 ST Edge AI Core v1.0.0-19895
-Created date          : 2024-10-18 15:47:01
-Parameters            : generate --target stm32h7 --name network -m /home/freire/Downloads/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace397469996661612041732967058535466 --output /home/freire/.stm32cubemx/network_output
+Created date          : 2024-10-21 16:41:27
+Parameters            : generate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace3135080113910714980169876206616152 --output /home/freire/.stm32cubemx/network_output
 
 Exec/report summary (generate)
---------------------------------------------------------------------------------------------
-model file         :   /home/freire/Downloads/model_vbp5.tflite                             
-type               :   tflite                                                               
-c_name             :   network                                                              
-compression        :   none                                                                 
-options            :   allocate-inputs, allocate-outputs                                    
-optimization       :   time                                                                 
-target/series      :   stm32h7                                                              
-workspace dir      :   /tmp/mxAI_workspace397469996661612041732967058535466                 
-output dir         :   /home/freire/.stm32cubemx/network_output                             
-model_fmt          :   float                                                                
-model_name         :   model_vbp5                                                           
-model_hash         :   0xedf1ee5352e4d0b0487479f3da827736                                   
-params #           :   50,305 items (196.50 KiB)                                            
---------------------------------------------------------------------------------------------
-input 1/1          :   'serving_default_input_layer_280', f32(1x4), 16 Bytes, activations   
-output 1/1         :   'gemm_4', f32(1x1), 4 Bytes, activations                             
-macc               :   50,817                                                               
-weights (ro)       :   201,220 B (196.50 KiB) (1 segment)                                   
-activations (rw)   :   1,024 B (1024 B) (1 segment) *                                       
-ram (total)        :   1,024 B (1024 B) = 1,024 + 0 + 0                                     
---------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+model file         :   /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite   
+type               :   tflite                                                                           
+c_name             :   network                                                                          
+compression        :   none                                                                             
+options            :   allocate-inputs, allocate-outputs                                                
+optimization       :   time                                                                             
+target/series      :   stm32h7                                                                          
+workspace dir      :   /tmp/mxAI_workspace3135080113910714980169876206616152                            
+output dir         :   /home/freire/.stm32cubemx/network_output                                         
+model_fmt          :   float                                                                            
+model_name         :   model_vbp5                                                                       
+model_hash         :   0xedf1ee5352e4d0b0487479f3da827736                                               
+params #           :   50,305 items (196.50 KiB)                                                        
+--------------------------------------------------------------------------------------------------------
+input 1/1          :   'serving_default_input_layer_280', f32(1x4), 16 Bytes, activations               
+output 1/1         :   'gemm_4', f32(1x1), 4 Bytes, activations                                         
+macc               :   50,817                                                                           
+weights (ro)       :   201,220 B (196.50 KiB) (1 segment)                                               
+activations (rw)   :   1,024 B (1024 B) (1 segment) *                                                   
+ram (total)        :   1,024 B (1024 B) = 1,024 + 0 + 0                                                 
+--------------------------------------------------------------------------------------------------------
 (*) 'input'/'output' buffers can be used from the activations buffer
 
 Model name - model_vbp5

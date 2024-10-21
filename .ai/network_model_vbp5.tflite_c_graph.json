@@ -62,7 +62,7 @@
         }
     },
     "activations_alignment": 4,
-    "arguments": "generate --target stm32h7 --name network -m /home/freire/Downloads/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace397469996661612041732967058535466 --output /home/freire/.stm32cubemx/network_output",
+    "arguments": "generate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace3135080113910714980169876206616152 --output /home/freire/.stm32cubemx/network_output",
     "c_activations_count": 1,
     "c_arrays": [
         {
@@ -864,7 +864,7 @@
         ]
     },
     "data_alignment": 4,
-    "date_time": "2024-10-18T15:47:00-0300",
+    "date_time": "2024-10-21T16:41:26-0300",
     "inputs": [
         "serving_default_input_layer_280_output"
     ],

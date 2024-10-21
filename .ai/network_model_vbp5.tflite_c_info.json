@@ -634,35 +634,35 @@
   "environment": {
     "device": null,
     "generated_model": {
-      "generated_time": "2024-10-18T15:47:00-0300",
+      "generated_time": "2024-10-21T16:41:26-0300",
       "model_files": [
         {
           "name": "network_data_params.h",
-          "signature": "0x61283475fb02959c1bb25636062c6f8b"
+          "signature": "0xa0faf042fc9c4d638af99376bd6d463f"
         },
         {
           "name": "network_data_params.c",
-          "signature": "0x875c8c6a7de8cae34a15c02b5625b240"
+          "signature": "0x2d382fb3ffed621b198434a38f0596de"
         },
         {
           "name": "network_data.h",
-          "signature": "0xe53e544e4f4d444c11bbc5f216edc4b8"
+          "signature": "0x4b135fbdd80aac4dc2d23dfa16c66820"
         },
         {
           "name": "network_data.c",
-          "signature": "0x2d628cd2744a816b505fec4da425f96d"
+          "signature": "0xe6747bbca631cb576afdddf7ab869237"
         },
         {
           "name": "network_config.h",
-          "signature": "0x6a52e4d0510b0c31c6fa4978632b488f"
+          "signature": "0xf092d6e42b0d5330a519d4b4dbcb81d1"
         },
         {
           "name": "network.h",
-          "signature": "0xc3f5664c7ab526cbc3db4cfe68cb8138"
+          "signature": "0x32eb4f0304ba785f6477baadd513ef39"
         },
         {
           "name": "network.c",
-          "signature": "0xe7e3e18430c0283b825bb93d0d36aeb4"
+          "signature": "0xa3571e7a2537507d692cccad1c2d35f8"
         }
       ],
       "n_params": null,
@@ -670,11 +670,11 @@
       "size": null,
       "type": null
     },
-    "network_signature": "0x9d85f29d4b0f8488",
+    "network_signature": "0x803017d0cbed8477",
     "test_name": "",
     "tools": [
       {
-        "arguments": "generate --target stm32h7 --name network -m /home/freire/Downloads/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace397469996661612041732967058535466 --output /home/freire/.stm32cubemx/network_output",
+        "arguments": "generate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace3135080113910714980169876206616152 --output /home/freire/.stm32cubemx/network_output",
         "environment": [
           "STATS_TYPE=X-CUBE-AI"
         ],

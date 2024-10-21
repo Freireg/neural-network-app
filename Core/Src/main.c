@@ -58,6 +58,66 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/* Global handle to reference the instantiated C-model */
+static ai_handle network = AI_HANDLE_NULL;
+
+/* Global c-array to handle the activations buffer */
+AI_ALIGNED(32)
+static ai_u8 activations[AI_NETWORK_DATA_ACTIVATIONS_SIZE];
+
+/* Array to store the data of the input tensor */
+AI_ALIGNED(32)
+static ai_float in_data[AI_NETWORK_IN_1_SIZE];
+/* or static ai_u8 in_data[AI_NETWORK_IN_1_SIZE_BYTES]; */
+
+/* c-array to store the data of the output tensor */
+AI_ALIGNED(32)
+static ai_float out_data[AI_NETWORK_OUT_1_SIZE];
+/* static ai_u8 out_data[AI_NETWORK_OUT_1_SIZE_BYTES]; */
+
+/* Array of pointer to manage the model's input/output tensors */
+static ai_buffer *ai_input;
+static ai_buffer *ai_output;
+
+/*
+ * Bootstrap
+ */
+int aiInit(void) {
+  ai_error err;
+
+  /* Create and initialize the c-model */
+  const ai_handle acts[] = { activations };
+  err = ai_network_create_and_init(&network, acts, NULL);
+  if (err.type != AI_ERROR_NONE)
+  {
+	  return 0;
+  }
+  /* Reteive pointers to the model's input/output tensors */
+  ai_input = ai_network_inputs_get(network, NULL);
+  ai_output = ai_network_outputs_get(network, NULL);
+
+  return 0;
+}
+
+/*
+ * Run inference
+ */
+int aiRun(const void *in_data, void *out_data) {
+  ai_i32 n_batch;
+  ai_error err;
+
+  /* 1 - Update IO handlers with the data payload */
+  ai_input[0].data = AI_HANDLE_PTR(in_data);
+  ai_output[0].data = AI_HANDLE_PTR(out_data);
+
+  /* 2 - Perform the inference */
+  n_batch = ai_network_run(network, &ai_input[0], &ai_output[0]);
+  if (n_batch != 1) {
+      err = ai_network_get_error(network);
+  };
+
+  return 0;
+}
 
 /* USER CODE END 0 */
 
@@ -68,34 +128,6 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	char buf[50];
-	int buf_len =0;
-	ai_error ai_err;
-	ai_i32 nbatch;
-	uint32_t timestamp;
-	float y_val;
-
-	// Chunk of memory used to hold intermediate values for neural network
-	AI_ALIGNED(4) ai_u8 activations[AI_NETWORK_DATA_ACTIVATIONS_SIZE];
-	// Chunk of memory used to hold intermediate values for neural network
-	AI_ALIGNED(4) ai_i8 in_data[AI_NETWORK_IN_1_SIZE_BYTES];
-	AI_ALIGNED(4) ai_i8 out_data[AI_NETWORK_OUT_1_SIZE_BYTES];
-	// Pointer to model
-	ai_handle network = AI_HANDLE_NULL;
-	// Init wrapper structs that hold pointers to data and info about
-	// the data (tensor height, width, channels)
-	ai_buffer ai_input[AI_NETWORK_IN_NUM] = AI_NETWORK_IN;
-	ai_buffer ai_output[AI_NETWORK_OUT_NUM] = AI_NETWORK_OUT;
-	// Set working memory and get weights/biases from model
-	ai_network_params ai_params = {
-			AI_NETWORK_DATA_WEIGHTS(ai_network_data_weights_get()),
-			AI_NETWORK_DATA_ACTIVATIONS(activations)
-	};
-	// Set pointers wrapper structs to the data buffers
-	ai_input[0].data = AI_HANDLE_PTR(in_data);
-	ai_output[0].data = AI_HANDLE_PTR(out_data);
-
-
 
   /* USER CODE END 1 */
 /* Enable the CPU Cache */
@@ -131,11 +163,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  aiInit();
   while (1)
   {
+	  /* Put data onto input buffers */
+	  //pre_process(in_data);
+	  /* Call inference engine */
+	  aiRun(in_data, out_data);
+	  /* Post-process data */
+	  //post_process(out_data);
     /* USER CODE END WHILE */
 
-//  MX_X_CUBE_AI_Process();
+  MX_X_CUBE_AI_Process();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
