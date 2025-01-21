@@ -1,7 +1,7 @@
 {
     "_allocate_inputs": 4,
     "_allocate_outputs": 4,
-    "cli_parameters": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace10184559987009714929475481757782077 --output /home/freire/.stm32cubemx/network_output",
+    "cli_parameters": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace9111595756087412291056857916860634 --output /home/freire/.stm32cubemx/network_output",
     "cli_version": {
         "extra": "19895",
         "major": 1,
@@ -11,7 +11,7 @@
     "cli_version_str": "1.0.0-19895",
     "code_size": 0,
     "compression": [],
-    "date_time": "2025-01-21T12:55:43-0300",
+    "date_time": "2025-01-21T09:56:54-0300",
     "error": 0,
     "error_str": [],
     "exec_cmd": "validate",

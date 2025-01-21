@@ -35,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define SAMPLES_NUMBER	5
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,12 +46,34 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+typedef struct {
+	float ammonia;
+	float nitrite;
+	float temperature;
+	float pH;
+}input_data_t;
 
+static input_data_t samples_input[SAMPLES_NUMBER] = {
+		{1.325, 0.075, 25.000, 7.850},
+		{0.500, 0.450, 27.500, 7.750},
+		{0.432, 0.340, 26.500, 7.800},
+		{0.285, 0.500, 27.500, 7.650},
+		{0.000, 0.290, 26.000, 7.800},
+};
+
+static float expected_output[SAMPLES_NUMBER] = {
+		6.600,
+		6.300,
+		6.800,
+		6.700,
+		6.600,
+};
+
+float inference_output[SAMPLES_NUMBER] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -92,7 +114,7 @@ int aiInit(void) {
   {
 	  return 0;
   }
-  /* Reteive pointers to the model's input/output tensors */
+  /* Retrieve pointers to the model's input/output tensors */
   ai_input = ai_network_inputs_get(network, NULL);
   ai_output = ai_network_outputs_get(network, NULL);
 
@@ -119,6 +141,22 @@ int aiRun(const void *in_data, void *out_data) {
   return 0;
 }
 
+int aiPreProcess(ai_float* input_array, uint8_t index) {
+
+	input_array[0] = samples_input[index].ammonia; // Ammonia value
+	input_array[1] = samples_input[index].nitrite; // Nitrite
+	input_array[2] = samples_input[index].temperature;	// Temperature
+	input_array[3] = samples_input[index].pH;  // pH
+
+	return 0;
+}
+
+int aiPostProcess(ai_float* inference_value, uint8_t index) {
+	//Store inference output on comparison buffer
+	inference_output[index] = inference_value[0];
+
+	return 0;
+}
 /* USER CODE END 0 */
 
 /**
@@ -155,8 +193,7 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_X_CUBE_AI_Init();
+//  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -166,15 +203,18 @@ int main(void)
   aiInit();
   while (1)
   {
+	  for(int i = 0; i < SAMPLES_NUMBER; i++) {
 	  /* Put data onto input buffers */
-	  //pre_process(in_data);
+	  aiPreProcess(in_data, i);
 	  /* Call inference engine */
-	  aiRun(in_data, out_data);
+	  aiRun(in_data, out_data); // All the network initialization and in/out handling is done in 'app_x-cube-ai.c'
 	  /* Post-process data */
-	  //post_process(out_data);
+	  aiPostProcess(out_data, i);
+	  }
+	 __asm("NOP");
     /* USER CODE END WHILE */
 
-  MX_X_CUBE_AI_Process();
+//  MX_X_CUBE_AI_Process();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -195,23 +235,24 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
+  RCC_OscInitStruct.HSICalibrationValue = 64;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 275;
-  RCC_OscInitStruct.PLL.PLLP = 1;
+  RCC_OscInitStruct.PLL.PLLN = 12;
+  RCC_OscInitStruct.PLL.PLLP = 6;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   RCC_OscInitStruct.PLL.PLLR = 2;
-  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_1;
+  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
   RCC_OscInitStruct.PLL.PLLFRACN = 0;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -232,32 +273,36 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
     Error_Handler();
   }
 }
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
-}
-
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM1 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM1) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

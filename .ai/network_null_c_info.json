@@ -634,35 +634,35 @@
   "environment": {
     "device": "x86_64, x86_64, Linux",
     "generated_model": {
-      "generated_time": "2025-01-21T12:55:43-0300",
+      "generated_time": "2025-01-21T09:56:54-0300",
       "model_files": [
         {
           "name": "network_data_params.h",
-          "signature": "0xe82541ff92f2e8d8d8fce397d0b2a1cc"
+          "signature": "0x460eef9237b58a7926ba95757f0ae250"
         },
         {
           "name": "network_data_params.c",
-          "signature": "0x8b7ca6266b98ddf78c60a27fbb356f3d"
+          "signature": "0x55f62072b036c925b85c6b970d5821ce"
         },
         {
           "name": "network_data.h",
-          "signature": "0x9c31d38a32de5bd44fdeaa96d48b0433"
+          "signature": "0x33013446fca61f1633c393f72b3694d0"
         },
         {
           "name": "network_data.c",
-          "signature": "0x2bc470e1314a8e58b4ff44d5bb40cb28"
+          "signature": "0x5590d17fde589b427db7228939ff8441"
         },
         {
           "name": "network_config.h",
-          "signature": "0xefb8ebd449475904bb6293caffbd7080"
+          "signature": "0x76397df0acc159dd952d9b72d621d013"
         },
         {
           "name": "network.h",
-          "signature": "0xf1d9cbe78e40d60ca6ecd3d1be1ef793"
+          "signature": "0xd8a55b4ad9676425368a1c3711a43f1f"
         },
         {
           "name": "network.c",
-          "signature": "0xbb7ad87b512fdf529ea56ce6afeb06e1"
+          "signature": "0x61429ca317c1a0b8d473a78e775dc433"
         }
       ],
       "n_params": null,
@@ -670,11 +670,11 @@
       "size": null,
       "type": null
     },
-    "network_signature": "0x31f25607b1be5ea0",
+    "network_signature": "0xe90b055349b9f9f9",
     "test_name": "",
     "tools": [
       {
-        "arguments": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace10184559987009714929475481757782077 --output /home/freire/.stm32cubemx/network_output",
+        "arguments": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace9111595756087412291056857916860634 --output /home/freire/.stm32cubemx/network_output",
         "environment": [
           "STATS_TYPE=X-CUBE-AI"
         ],
@@ -824,7 +824,7 @@
         "counters": [],
         "cycles": 0,
         "cycles_by_macc": 0.0,
-        "duration_ms": 0.03237500159593765,
+        "duration_ms": 0.02850000179023482,
         "percentage": 100.0
       },
       "id": 0,
@@ -843,8 +843,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.0006250000296859071,
-            "percentage": 1.9305019270310426
+            "duration_ms": 0.0002500000118743628,
+            "percentage": 0.8771929690194697
           },
           "id": 11,
           "inputs": [
@@ -876,8 +876,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.0005000000237487257,
-            "percentage": 1.544401541624834
+            "duration_ms": 0.0002500000118743628,
+            "percentage": 0.8771929690194697
           },
           "id": 12,
           "inputs": [
@@ -908,8 +908,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.010375000536441803,
-            "percentage": 32.0463321235593
+            "duration_ms": 0.009625000646337867,
+            "percentage": 33.771929971021116
           },
           "id": 13,
           "inputs": [
@@ -941,8 +941,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.0001250000059371814,
-            "percentage": 0.3861003854062085
+            "duration_ms": 0.0,
+            "percentage": 0.0
           },
           "id": 14,
           "inputs": [
@@ -973,8 +973,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.009875000454485416,
-            "percentage": 30.501930402142474
+            "duration_ms": 0.00912500056438148,
+            "percentage": 32.01754382874478
           },
           "id": 15,
           "inputs": [
@@ -1006,8 +1006,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.0001250000059371814,
-            "percentage": 0.3861003854062085
+            "duration_ms": 0.0,
+            "percentage": 0.0
           },
           "id": 16,
           "inputs": [
@@ -1038,8 +1038,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.010250000515952706,
-            "percentage": 31.660231693205095
+            "duration_ms": 0.009000000543892384,
+            "percentage": 31.5789472931757
           },
           "id": 17,
           "inputs": [
@@ -1103,8 +1103,8 @@
             "counters": [],
             "cycles": 0,
             "cycles_by_macc": 0.0,
-            "duration_ms": 0.0005000000237487257,
-            "percentage": 1.544401541624834
+            "duration_ms": 0.0002500000118743628,
+            "percentage": 0.8771929690194697
           },
           "id": 19,
           "inputs": [

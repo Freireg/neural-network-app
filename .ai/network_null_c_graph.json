@@ -62,7 +62,7 @@
         }
     },
     "activations_alignment": 4,
-    "arguments": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace10184559987009714929475481757782077 --output /home/freire/.stm32cubemx/network_output",
+    "arguments": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace9111595756087412291056857916860634 --output /home/freire/.stm32cubemx/network_output",
     "c_activations_count": 1,
     "c_arrays": [
         {
@@ -574,8 +574,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.0006250000296859071,
-                "percentage": 1.9305019270310426
+                "duration_ms": 0.0002500000118743628,
+                "percentage": 0.8771929690194697
             },
             "is_wrapped": "",
             "layer_type": "Dense",
@@ -614,8 +614,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.0005000000237487257,
-                "percentage": 1.544401541624834
+                "duration_ms": 0.0002500000118743628,
+                "percentage": 0.8771929690194697
             },
             "is_wrapped": "",
             "layer_type": "Nonlinearity",
@@ -651,8 +651,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.010375000536441803,
-                "percentage": 32.0463321235593
+                "duration_ms": 0.009625000646337867,
+                "percentage": 33.771929971021116
             },
             "is_wrapped": "",
             "layer_type": "Dense",
@@ -691,8 +691,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.0001250000059371814,
-                "percentage": 0.3861003854062085
+                "duration_ms": 0.0,
+                "percentage": 0.0
             },
             "is_wrapped": "",
             "layer_type": "Nonlinearity",
@@ -728,8 +728,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.009875000454485416,
-                "percentage": 30.501930402142474
+                "duration_ms": 0.00912500056438148,
+                "percentage": 32.01754382874478
             },
             "is_wrapped": "",
             "layer_type": "Dense",
@@ -768,8 +768,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.0001250000059371814,
-                "percentage": 0.3861003854062085
+                "duration_ms": 0.0,
+                "percentage": 0.0
             },
             "is_wrapped": "",
             "layer_type": "Nonlinearity",
@@ -805,8 +805,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.010250000515952706,
-                "percentage": 31.660231693205095
+                "duration_ms": 0.009000000543892384,
+                "percentage": 31.5789472931757
             },
             "is_wrapped": "",
             "layer_type": "Dense",
@@ -882,8 +882,8 @@
                 "counters": [],
                 "cycles": 0,
                 "cycles_by_macc": 0.0,
-                "duration_ms": 0.0005000000237487257,
-                "percentage": 1.544401541624834
+                "duration_ms": 0.0002500000118743628,
+                "percentage": 0.8771929690194697
             },
             "is_wrapped": "",
             "layer_type": "Dense",
@@ -927,12 +927,12 @@
         ]
     },
     "data_alignment": 4,
-    "date_time": "2025-01-21T12:55:43-0300",
+    "date_time": "2025-01-21T09:56:54-0300",
     "exec_time": {
         "cycles": 0,
         "cycles_by_macc": 0.0,
         "device": "x86_64, x86_64, Linux",
-        "duration_ms": 0.03237500159593765
+        "duration_ms": 0.02850000179023482
     },
     "inputs": [
         "serving_default_input_layer_280_output"
