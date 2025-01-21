@@ -18,6 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "spi.h"
+#include "tim.h"
+#include "gpio.h"
 #include "app_x-cube-ai.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -26,6 +29,8 @@
 #include "ai_platform.h"
 #include "network.h"
 #include "network_data.h"
+#include "board.h"
+#include "lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -157,6 +162,30 @@ int aiPostProcess(ai_float* inference_value, uint8_t index) {
 
 	return 0;
 }
+
+void appInitLCD(void){
+	uint32_t tick = HAL_GetTick();
+	uint8_t text[20] = {0};
+
+	ST7735Ctx.Orientation = ST7735_ORIENTATION_LANDSCAPE_ROT180;
+	ST7735Ctx.Panel = HannStar_Panel;
+	ST7735Ctx.Type = ST7735_0_9_inch_screen;
+
+	ST7735_RegisterBusIO(&st7735_pObj,&st7735_pIO);
+	ST7735_LCD_Driver.Init(&st7735_pObj,ST7735_FORMAT_RBG565,&ST7735Ctx);
+	ST7735_LCD_Driver.ReadID(&st7735_pObj,&st7735_id);
+
+	LCD_SetBrightness(0);
+
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+	sprintf((char *)&text, "Starting App");
+	LCD_ShowString(4, 4, ST7735Ctx.Width, 16, 16, text);
+	sprintf((char *)&text, "Booting up device");
+	LCD_ShowString(4, 22, ST7735Ctx.Width, 16, 16, text);
+
+	LCD_Light(100, 200);
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -174,7 +203,7 @@ int main(void)
   SCB_EnableICache();
 
   /* Enable D-Cache---------------------------------------------------------*/
-  SCB_EnableDCache();
+//  SCB_EnableDCache();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -193,6 +222,9 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_SPI4_Init();
+  MX_TIM1_Init();
 //  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
 
@@ -200,6 +232,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint32_t ticks = HAL_GetTick();
+  appInitLCD();
+  HAL_Delay(1500);
+  LCD_SetBrightness(0);
+  ST7735_FillRect(&st7735_pObj, 0,0, ST7735Ctx.Width, 80, BLACK);
+  uint8_t text[] = "Hello world!";
+  sprintf((char *)&text, "Device took %03d ms to boot!", ((HAL_GetTick() - ticks)));
+  LCD_ShowString(4, 4, 160, 16, 16, text);
+
   aiInit();
   while (1)
   {
@@ -235,7 +276,7 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
@@ -248,13 +289,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 12;
-  RCC_OscInitStruct.PLL.PLLP = 6;
+  RCC_OscInitStruct.PLL.PLLN = 34;
+  RCC_OscInitStruct.PLL.PLLP = 1;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 0;
+  RCC_OscInitStruct.PLL.PLLFRACN = 3072;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -273,7 +314,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -282,27 +323,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM1 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM1) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.
