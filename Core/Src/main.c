@@ -18,6 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "spi.h"
+#include "tim.h"
+#include "gpio.h"
 #include "app_x-cube-ai.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -26,6 +29,8 @@
 #include "ai_platform.h"
 #include "network.h"
 #include "network_data.h"
+#include "board.h"
+#include "lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define SAMPLES_NUMBER	5
+#define SAMPLES_NUMBER	10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -59,6 +64,12 @@ static input_data_t samples_input[SAMPLES_NUMBER] = {
 		{0.432, 0.340, 26.500, 7.800},
 		{0.285, 0.500, 27.500, 7.650},
 		{0.000, 0.290, 26.000, 7.800},
+		{0.250, 0.300, 26.000, 7.850},
+		{0.000, 0.190, 25.600, 7.900},
+		{1.500, 0.125, 25.000, 7.900},
+		{0.810, 0.500, 29.000, 7.100},
+		{0.100, 0.400, 26.900, 7.500},
+
 };
 
 static float expected_output[SAMPLES_NUMBER] = {
@@ -67,6 +78,12 @@ static float expected_output[SAMPLES_NUMBER] = {
 		6.800,
 		6.700,
 		6.600,
+		7.000,
+		6.400,
+		6.500,
+		5.700,
+		8.000,
+
 };
 
 float inference_output[SAMPLES_NUMBER] = {0};
@@ -75,7 +92,8 @@ float inference_output[SAMPLES_NUMBER] = {0};
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void appInitLCD(void);
+void appDisplayInference(float inference_value, float expected_value, uint32_t ticks);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -141,7 +159,7 @@ int aiRun(const void *in_data, void *out_data) {
   return 0;
 }
 
-int aiPreProcess(ai_float* input_array, uint8_t index) {
+int aiPreProcess(ai_float* input_array, int index) {
 
 	input_array[0] = samples_input[index].ammonia; // Ammonia value
 	input_array[1] = samples_input[index].nitrite; // Nitrite
@@ -151,12 +169,15 @@ int aiPreProcess(ai_float* input_array, uint8_t index) {
 	return 0;
 }
 
-int aiPostProcess(ai_float* inference_value, uint8_t index) {
+int aiPostProcess(ai_float* inference_value, int index, uint32_t inference_time) {
+	uint32_t ticks = HAL_GetTick();
 	//Store inference output on comparison buffer
 	inference_output[index] = inference_value[0];
 
+	appDisplayInference(inference_value[0], expected_output[index], inference_time);
 	return 0;
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -174,7 +195,7 @@ int main(void)
   SCB_EnableICache();
 
   /* Enable D-Cache---------------------------------------------------------*/
-  SCB_EnableDCache();
+//  SCB_EnableDCache();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -193,6 +214,9 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_SPI4_Init();
+  MX_TIM1_Init();
 //  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
 
@@ -200,16 +224,29 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint32_t ticks = HAL_GetTick();
+  appInitLCD();
+  HAL_Delay(1500);
+  LCD_SetBrightness(0);
+  ST7735_FillRect(&st7735_pObj, 0,0, ST7735Ctx.Width, 80, BLACK);
+  uint8_t text[] = "Hello world!";
+  sprintf((char *)&text, "Device took %03d ms to boot!", ((HAL_GetTick() - ticks)));
+  LCD_ShowString(4, 4, 160, 16, 16, text);
+
   aiInit();
   while (1)
   {
 	  for(int i = 0; i < SAMPLES_NUMBER; i++) {
 	  /* Put data onto input buffers */
 	  aiPreProcess(in_data, i);
+	  ticks = HAL_GetTick();
 	  /* Call inference engine */
 	  aiRun(in_data, out_data); // All the network initialization and in/out handling is done in 'app_x-cube-ai.c'
 	  /* Post-process data */
-	  aiPostProcess(out_data, i);
+	  ticks = HAL_GetTick() - ticks;
+	  aiPostProcess(out_data, i, ticks);
+
+	  HAL_Delay(1000);
 	  }
 	 __asm("NOP");
     /* USER CODE END WHILE */
@@ -235,7 +272,7 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
@@ -248,13 +285,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 12;
-  RCC_OscInitStruct.PLL.PLLP = 6;
+  RCC_OscInitStruct.PLL.PLLN = 34;
+  RCC_OscInitStruct.PLL.PLLP = 1;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 0;
+  RCC_OscInitStruct.PLL.PLLFRACN = 3072;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -273,36 +310,61 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
 }
 
 /* USER CODE BEGIN 4 */
+void appInitLCD(void){
+	uint8_t text[20] = {0};
 
-/* USER CODE END 4 */
+	ST7735Ctx.Orientation = ST7735_ORIENTATION_LANDSCAPE_ROT180;
+	ST7735Ctx.Panel = HannStar_Panel;
+	ST7735Ctx.Type = ST7735_0_9_inch_screen;
 
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM1 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
+	ST7735_RegisterBusIO(&st7735_pObj,&st7735_pIO);
+	ST7735_LCD_Driver.Init(&st7735_pObj,ST7735_FORMAT_RBG565,&ST7735Ctx);
+	ST7735_LCD_Driver.ReadID(&st7735_pObj,&st7735_id);
 
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM1) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
+	LCD_SetBrightness(0);
 
-  /* USER CODE END Callback 1 */
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+	sprintf((char *)&text, "Starting App");
+	LCD_ShowString(4, 4, ST7735Ctx.Width, 16, 16, text);
+	sprintf((char *)&text, "Booting up device");
+	LCD_ShowString(4, 22, ST7735Ctx.Width, 16, 16, text);
+
+	LCD_Light(100, 200);
+
 }
+
+void appDisplayInference(float inference_value, float expected_value, uint32_t ticks) {
+	uint8_t string_expected[50] = {0};
+	uint8_t string_inference[50] = {0};
+	uint8_t string_time[30] = {0};
+	uint8_t string_mse[30] = {0};
+	float mse_result = 0;
+
+	mse_result = powf((inference_value - expected_value), 2);
+
+	LCD_SetBrightness(0);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+
+	sprintf((char *)&string_expected, "Expected: %.3f", expected_value);
+	LCD_ShowString(4, 4, ST7735Ctx.Width, 16, 16, string_expected);
+
+	sprintf((char *)&string_inference, "Inference: %.3f", inference_value);
+	LCD_ShowString(4, 22, ST7735Ctx.Width, 16, 16, string_inference);
+
+	sprintf((char *)&string_mse, "MSE: %.4f", mse_result);
+	LCD_ShowString(4, 40, ST7735Ctx.Width, 16, 16, string_mse);
+
+	sprintf((char *)&string_time, "Time: %" PRIu32 " ms", ticks);
+	LCD_ShowString(4, 60, ST7735Ctx.Width, 16, 16, string_time);
+}
+/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.
