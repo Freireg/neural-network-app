@@ -187,6 +187,57 @@ int aiPostProcess(ai_float* inference_value, int index, uint32_t inference_time)
 	return 0;
 }
 
+void demoApp(void) {
+	uint32_t ticks;
+
+	for(int i = 0; i < SAMPLES_NUMBER; i++) {
+		/* Put data onto input buffers */
+		aiPreProcess(in_data, i);
+		ticks = HAL_GetTick();
+		/* Call inference engine */
+		aiRun(in_data, out_data); // All the network initialization and in/out handling is done in 'app_x-cube-ai.c'
+		/* Post-process data */
+		ticks = HAL_GetTick() - ticks;
+		aiPostProcess(out_data, i, ticks);
+	}
+}
+
+void evalApp(void){
+	uint8_t tx_buffer[7] = "READY\n";
+	uint8_t rx_buffer[APP_STRING_SIZE] = {0};
+	uint32_t timeout = 0;
+	uint8_t compare_result = 1;
+	input_data_t sample_data = {0};
+	ai_float input_array[4] = {0};
+	ai_float inference_output[1] = {0};
+
+	/* Send the READY response to the application */
+	HAL_UART_Transmit(&huart4, tx_buffer, sizeof(tx_buffer), 10);
+	/* Receive the first sample */
+	HAL_UART_Receive(&huart4, rx_buffer, sizeof(rx_buffer), 10000);
+	/* Compare received string with END message*/
+	compare_result =(strncmp(rx_buffer, "END", 3));
+	while((compare_result) && (rx_buffer[0] != 0)) {
+		/* Process samples */
+		sscanf((char*)rx_buffer, "%f %f %f %f",
+				&sample_data.ammonia,
+				&sample_data.nitrite,
+				&sample_data.temperature,
+				&sample_data.pH);
+		input_array[0] = sample_data.ammonia;
+		input_array[1] = sample_data.nitrite;
+		input_array[2] = sample_data.temperature;
+		input_array[3] = sample_data.pH;
+
+		aiRun(input_array, inference_output);
+		sprintf(tx_buffer, "%.3f", inference_output[0]);
+		HAL_UART_Transmit(&huart4, tx_buffer, sizeof(tx_buffer), 100);
+		memset(rx_buffer, 0x00, sizeof(rx_buffer));
+		HAL_UART_Receive(&huart4, rx_buffer, sizeof(rx_buffer), 10000);
+		compare_result =(strncmp(rx_buffer, "END", 3));
+	}
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -227,7 +278,7 @@ int main(void)
   MX_SPI4_Init();
   MX_TIM1_Init();
   MX_UART4_Init();
-  MX_X_CUBE_AI_Init();
+//  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -248,26 +299,26 @@ int main(void)
   while (1)
   {
     if (demo_mode) {
-      samples_counter = SAMPLES_NUMBER;
+    	evalApp();
     } else {
       samples_counter = 1;
     }
-	  for(int i = 0; i < samples_counter; i++) {
-	  /* Put data onto input buffers */
-	  aiPreProcess(in_data, i);
-	  ticks = HAL_GetTick();
-	  /* Call inference engine */
-	  aiRun(in_data, out_data); // All the network initialization and in/out handling is done in 'app_x-cube-ai.c'
-	  /* Post-process data */
-	  ticks = HAL_GetTick() - ticks;
-	  aiPostProcess(out_data, i, ticks);
+//	  for(int i = 0; i < SAMPLES_NUMBER; i++) {
+//	  /* Put data onto input buffers */
+//	  aiPreProcess(in_data, i);
+//	  ticks = HAL_GetTick();
+//	  /* Call inference engine */
+//	  aiRun(in_data, out_data); // All the network initialization and in/out handling is done in 'app_x-cube-ai.c'
+//	  /* Post-process data */
+//	  ticks = HAL_GetTick() - ticks;
+//	  aiPostProcess(out_data, i, ticks);
 
 	  HAL_Delay(1000);
-	  }
+//	  }
 	 __asm("NOP");
     /* USER CODE END WHILE */
 
-  MX_X_CUBE_AI_Process();
+//  MX_X_CUBE_AI_Process();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
