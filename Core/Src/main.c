@@ -20,6 +20,7 @@
 #include "main.h"
 #include "spi.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 #include "app_x-cube-ai.h"
 
@@ -31,6 +32,7 @@
 #include "network_data.h"
 #include "board.h"
 #include "lcd.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,6 +43,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define SAMPLES_NUMBER	10
+#define APP_STRING_SIZE 25
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -87,6 +90,8 @@ static float expected_output[SAMPLES_NUMBER] = {
 };
 
 float inference_output[SAMPLES_NUMBER] = {0};
+uint8_t app_rx_buffer[APP_STRING_SIZE] = {0};
+bool demo_mode = true;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -170,11 +175,15 @@ int aiPreProcess(ai_float* input_array, int index) {
 }
 
 int aiPostProcess(ai_float* inference_value, int index, uint32_t inference_time) {
-	uint32_t ticks = HAL_GetTick();
+	char temp[7] = {0};
 	//Store inference output on comparison buffer
 	inference_output[index] = inference_value[0];
 
 	appDisplayInference(inference_value[0], expected_output[index], inference_time);
+	sprintf(&temp, "%.3f\n", inference_output[index]);
+	HAL_UART_Transmit(&huart4, temp, 7, 100);
+
+//	CDC_Transmit_HS(temp, 5);
 	return 0;
 }
 
@@ -195,7 +204,7 @@ int main(void)
   SCB_EnableICache();
 
   /* Enable D-Cache---------------------------------------------------------*/
-//  SCB_EnableDCache();
+  SCB_EnableDCache();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -217,7 +226,8 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI4_Init();
   MX_TIM1_Init();
-//  MX_X_CUBE_AI_Init();
+  MX_UART4_Init();
+  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -225,18 +235,24 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint32_t ticks = HAL_GetTick();
+  int samples_counter = 0;
   appInitLCD();
   HAL_Delay(1500);
   LCD_SetBrightness(0);
   ST7735_FillRect(&st7735_pObj, 0,0, ST7735Ctx.Width, 80, BLACK);
-  uint8_t text[] = "Hello world!";
-  sprintf((char *)&text, "Device took %03d ms to boot!", ((HAL_GetTick() - ticks)));
+  uint8_t text[30]= {0};
+  sprintf((char *)&text, "Device took %" PRIu32 " ms to boot!", (HAL_GetTick() - ticks));
   LCD_ShowString(4, 4, 160, 16, 16, text);
 
   aiInit();
   while (1)
   {
-	  for(int i = 0; i < SAMPLES_NUMBER; i++) {
+    if (demo_mode) {
+      samples_counter = SAMPLES_NUMBER;
+    } else {
+      samples_counter = 1;
+    }
+	  for(int i = 0; i < samples_counter; i++) {
 	  /* Put data onto input buffers */
 	  aiPreProcess(in_data, i);
 	  ticks = HAL_GetTick();
@@ -251,7 +267,7 @@ int main(void)
 	 __asm("NOP");
     /* USER CODE END WHILE */
 
-//  MX_X_CUBE_AI_Process();
+  MX_X_CUBE_AI_Process();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -317,6 +333,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+//	char ref_string[] = "start";
+//	if (!(strcmp(app_rx_buffer, ref_string))) {
+//		demo_mode = false;
+//	}
+//	HAL_UART_Receive_IT(&huart4, app_rx_buffer, APP_STRING_SIZE);
+//}
 void appInitLCD(void){
 	uint8_t text[20] = {0};
 

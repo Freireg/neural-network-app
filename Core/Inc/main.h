@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define APP_UART_TX_Pin GPIO_PIN_0
+#define APP_UART_TX_GPIO_Port GPIOA
+#define APP_UART_RX_Pin GPIO_PIN_1
+#define APP_UART_RX_GPIO_Port GPIOA
 #define LCD_CS_Pin GPIO_PIN_11
 #define LCD_CS_GPIO_Port GPIOE
 #define LCD_WR_RS_Pin GPIO_PIN_13
