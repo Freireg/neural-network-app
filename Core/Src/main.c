@@ -212,7 +212,7 @@ void evalApp(void){
 	ai_float inference_output[1] = {0};
 
 	/* Send the READY response to the application */
-	HAL_UART_Transmit(&huart4, tx_buffer, sizeof(tx_buffer), 10);
+//	HAL_UART_Transmit(&huart4, tx_buffer, sizeof(tx_buffer), 10);
 	/* Receive the first sample */
 	HAL_UART_Receive(&huart4, rx_buffer, sizeof(rx_buffer), 10000);
 	/* Compare received string with END message*/
