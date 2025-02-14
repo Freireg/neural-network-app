@@ -1,6 +1,6 @@
 ST Edge AI Core v1.0.0-19895
-Created date          : 2025-01-21 09:26:05
-Parameters            : generate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace8926656667585315011153259362528147 --output /home/freire/.stm32cubemx/network_output
+Created date          : 2025-02-14 15:33:36
+Parameters            : generate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace1112377471712585144285004769472298 --output /home/freire/.stm32cubemx/network_output
 
 Exec/report summary (generate)
 --------------------------------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ compression        :   none
 options            :   allocate-inputs, allocate-outputs                                                
 optimization       :   time                                                                             
 target/series      :   stm32h7                                                                          
-workspace dir      :   /tmp/mxAI_workspace8926656667585315011153259362528147                            
+workspace dir      :   /tmp/mxAI_workspace1112377471712585144285004769472298                            
 output dir         :   /home/freire/.stm32cubemx/network_output                                         
 model_fmt          :   float                                                                            
 model_name         :   model_vbp5                                                                       

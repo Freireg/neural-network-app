@@ -20,11 +20,13 @@
 #include "main.h"
 #include "spi.h"
 #include "tim.h"
+#include "usb_device.h"
 #include "gpio.h"
 #include "app_x-cube-ai.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usbd_cdc_if.h"
 #include "ai_datatypes_defines.h"
 #include "ai_platform.h"
 #include "network.h"
@@ -207,6 +209,7 @@ int aiPostProcess(ai_float* inference_value, int index, float inference_time) {
 	inference_output[index] = inference_value[0];
 	time = (inference_time / HAL_RCC_GetHCLKFreq()) * 1000000;
 	appDisplayInference(inference_value[0], expected_output[index], time);
+	CDC_Transmit_HS((uint8_t *)"Inference ended!\n\r", 18);
 	return 0;
 }
 
@@ -249,6 +252,7 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI4_Init();
   MX_TIM1_Init();
+  MX_USB_DEVICE_Init();
 //  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
   DWT_Init();
@@ -311,9 +315,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = 64;
+  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
