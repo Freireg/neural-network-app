@@ -93,7 +93,7 @@ float inference_output[SAMPLES_NUMBER] = {0};
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void appInitLCD(void);
-void appDisplayInference(float inference_value, float expected_value, uint32_t ticks);
+void appDisplayInference(float inference_value, float expected_value, float ticks);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -118,6 +118,37 @@ static ai_float out_data[AI_NETWORK_OUT_1_SIZE];
 /* Array of pointer to manage the model's input/output tensors */
 static ai_buffer *ai_input;
 static ai_buffer *ai_output;
+
+uint32_t DWT_Init(void){
+	/* Disable TRC */
+	CoreDebug->DEMCR &= ~CoreDebug_DEMCR_TRCENA_Msk;
+	/* Enable TRC */
+	CoreDebug->DEMCR |=  CoreDebug_DEMCR_TRCENA_Msk;
+
+    /* Disable clock cycle counter */
+    DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk; //~0x00000001;
+    /* Enable  clock cycle counter */
+    DWT->CTRL |=  DWT_CTRL_CYCCNTENA_Msk; //0x00000001;
+
+    /* Reset the clock cycle counter value */
+    DWT->CYCCNT = 0;
+
+    /* 3 NO OPERATION instructions */
+    __ASM volatile ("NOP");
+    __ASM volatile ("NOP");
+    __ASM volatile ("NOP");
+
+    /* Check if clock cycle counter has started */
+    if(DWT->CYCCNT)
+    {
+       return 0; /*clock cycle counter started*/
+    }
+    else
+    {
+      return 1; /*clock cycle counter not started*/
+    }
+}
+
 
 /*
  * Bootstrap
@@ -169,12 +200,13 @@ int aiPreProcess(ai_float* input_array, int index) {
 	return 0;
 }
 
-int aiPostProcess(ai_float* inference_value, int index, uint32_t inference_time) {
-	uint32_t ticks = HAL_GetTick();
+int aiPostProcess(ai_float* inference_value, int index, float inference_time) {
+//	float convertToUS = (inference_time / HAL_RCC_GetHCLKFreq()) * 1000000;
+	float time = 0;
 	//Store inference output on comparison buffer
 	inference_output[index] = inference_value[0];
-
-	appDisplayInference(inference_value[0], expected_output[index], inference_time);
+	time = (inference_time / HAL_RCC_GetHCLKFreq()) * 1000000;
+	appDisplayInference(inference_value[0], expected_output[index], time);
 	return 0;
 }
 
@@ -219,12 +251,12 @@ int main(void)
   MX_TIM1_Init();
 //  MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
-
+  DWT_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t ticks = HAL_GetTick();
+  uint32_t ticks = DWT->CYCCNT;
   appInitLCD();
   HAL_Delay(1500);
   LCD_SetBrightness(0);
@@ -239,11 +271,11 @@ int main(void)
 	  for(int i = 0; i < SAMPLES_NUMBER; i++) {
 	  /* Put data onto input buffers */
 	  aiPreProcess(in_data, i);
-	  ticks = HAL_GetTick();
+	  ticks = DWT->CYCCNT;
 	  /* Call inference engine */
 	  aiRun(in_data, out_data); // All the network initialization and in/out handling is done in 'app_x-cube-ai.c'
 	  /* Post-process data */
-	  ticks = HAL_GetTick() - ticks;
+	  ticks = (DWT->CYCCNT) - ticks;
 	  aiPostProcess(out_data, i, ticks);
 
 	  HAL_Delay(1000);
@@ -340,7 +372,7 @@ void appInitLCD(void){
 
 }
 
-void appDisplayInference(float inference_value, float expected_value, uint32_t ticks) {
+void appDisplayInference(float inference_value, float expected_value, float ticks) {
 	uint8_t string_expected[50] = {0};
 	uint8_t string_inference[50] = {0};
 	uint8_t string_time[30] = {0};
@@ -361,7 +393,7 @@ void appDisplayInference(float inference_value, float expected_value, uint32_t t
 	sprintf((char *)&string_mse, "MSE: %.4f", mse_result);
 	LCD_ShowString(4, 40, ST7735Ctx.Width, 16, 16, string_mse);
 
-	sprintf((char *)&string_time, "Time: %" PRIu32 " ms", ticks);
+	sprintf((char *)&string_time, "Time: %.2fus", ticks);
 	LCD_ShowString(4, 60, ST7735Ctx.Width, 16, 16, string_time);
 }
 /* USER CODE END 4 */
