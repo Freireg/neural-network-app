@@ -1,7 +1,7 @@
 {
     "_allocate_inputs": 4,
     "_allocate_outputs": 4,
-    "cli_parameters": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace9111595756087412291056857916860634 --output /home/freire/.stm32cubemx/network_output",
+    "cli_parameters": "generate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace1112377471712585144285004769472298 --output /home/freire/.stm32cubemx/network_output",
     "cli_version": {
         "extra": "19895",
         "major": 1,
@@ -11,10 +11,10 @@
     "cli_version_str": "1.0.0-19895",
     "code_size": 0,
     "compression": [],
-    "date_time": "2025-01-21T09:56:54-0300",
+    "date_time": "2025-02-14T15:33:36-0300",
     "error": 0,
     "error_str": [],
-    "exec_cmd": "validate",
+    "exec_cmd": "generate",
     "exec_duration": 0.0,
     "hash": "0xedf1ee5352e4d0b0487479f3da827736",
     "inputs": [
@@ -472,20 +472,7 @@
     "strategy": "",
     "tools_api_version": "1.0.0-19895",
     "tools_version": "1.0.0-19895",
-    "val_error": 8.959741393255172e-08,
-    "val_error_desc": "x-cross (l2r) #1",
-    "val_metrics": [
-        {
-            "acc": "n.a.",
-            "cos": 1.0,
-            "desc": "X-cross #1",
-            "l2r": 8.959741393255172e-08,
-            "mae": 2.3841858265427618e-08,
-            "mean": -2.3841858265427618e-08,
-            "nse": 0.9999999999997383,
-            "rmse": 5.960464477539063e-08,
-            "std": 5.7583552148798844e-08,
-            "ts_name": "gemm_4, (1,), m_id=[4]"
-        }
-    ]
+    "val_error": -1.0,
+    "val_error_desc": "None (None) #-1",
+    "val_metrics": []
 }

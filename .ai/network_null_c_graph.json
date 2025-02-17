@@ -62,7 +62,7 @@
         }
     },
     "activations_alignment": 4,
-    "arguments": "validate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace9111595756087412291056857916860634 --output /home/freire/.stm32cubemx/network_output",
+    "arguments": "generate --target stm32h7 --name network -m /home/freire/experiments/cube-experiments/neural-network-app/model_vbp5.tflite --compression none --verbosity 1 --allocate-inputs -O time --allocate-outputs --workspace /tmp/mxAI_workspace1112377471712585144285004769472298 --output /home/freire/.stm32cubemx/network_output",
     "c_activations_count": 1,
     "c_arrays": [
         {
@@ -570,13 +570,6 @@
                 "forward_dense"
             ],
             "c_id": 0,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.0002500000118743628,
-                "percentage": 0.8771929690194697
-            },
             "is_wrapped": "",
             "layer_type": "Dense",
             "m_id": 0,
@@ -610,13 +603,6 @@
                 "forward_relu"
             ],
             "c_id": 1,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.0002500000118743628,
-                "percentage": 0.8771929690194697
-            },
             "is_wrapped": "",
             "layer_type": "Nonlinearity",
             "m_id": 0,
@@ -647,13 +633,6 @@
                 "forward_dense"
             ],
             "c_id": 2,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.009625000646337867,
-                "percentage": 33.771929971021116
-            },
             "is_wrapped": "",
             "layer_type": "Dense",
             "m_id": 1,
@@ -687,13 +666,6 @@
                 "forward_relu"
             ],
             "c_id": 3,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.0,
-                "percentage": 0.0
-            },
             "is_wrapped": "",
             "layer_type": "Nonlinearity",
             "m_id": 1,
@@ -724,13 +696,6 @@
                 "forward_dense"
             ],
             "c_id": 4,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.00912500056438148,
-                "percentage": 32.01754382874478
-            },
             "is_wrapped": "",
             "layer_type": "Dense",
             "m_id": 2,
@@ -764,13 +729,6 @@
                 "forward_relu"
             ],
             "c_id": 5,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.0,
-                "percentage": 0.0
-            },
             "is_wrapped": "",
             "layer_type": "Nonlinearity",
             "m_id": 2,
@@ -801,13 +759,6 @@
                 "forward_dense"
             ],
             "c_id": 6,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.009000000543892384,
-                "percentage": 31.5789472931757
-            },
             "is_wrapped": "",
             "layer_type": "Dense",
             "m_id": 3,
@@ -841,13 +792,6 @@
                 "forward_relu"
             ],
             "c_id": 7,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.0,
-                "percentage": 0.0
-            },
             "is_wrapped": "",
             "layer_type": "Nonlinearity",
             "m_id": 3,
@@ -878,13 +822,6 @@
                 "forward_dense"
             ],
             "c_id": 8,
-            "exec_time": {
-                "counters": [],
-                "cycles": 0,
-                "cycles_by_macc": 0.0,
-                "duration_ms": 0.0002500000118743628,
-                "percentage": 0.8771929690194697
-            },
             "is_wrapped": "",
             "layer_type": "Dense",
             "m_id": 4,
@@ -927,13 +864,7 @@
         ]
     },
     "data_alignment": 4,
-    "date_time": "2025-01-21T09:56:54-0300",
-    "exec_time": {
-        "cycles": 0,
-        "cycles_by_macc": 0.0,
-        "device": "x86_64, x86_64, Linux",
-        "duration_ms": 0.02850000179023482
-    },
+    "date_time": "2025-02-14T15:33:36-0300",
     "inputs": [
         "serving_default_input_layer_280_output"
     ],
@@ -944,7 +875,13 @@
             0,
             0
         ],
-        "series": "generic",
+        "kernel_flash": 10694,
+        "kernel_ram": 2804,
+        "series": "stm32h7",
+        "target": "stm32h7",
+        "toolchain": "arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)",
+        "toolchain_flash": 0,
+        "toolchain_ram": 0,
         "weights": 201220
     },
     "memory_pools": [],
