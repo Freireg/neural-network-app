@@ -205,11 +205,13 @@ int aiPreProcess(ai_float* input_array, int index) {
 int aiPostProcess(ai_float* inference_value, int index, float inference_time) {
 //	float convertToUS = (inference_time / HAL_RCC_GetHCLKFreq()) * 1000000;
 	float time = 0;
+	uint8_t txBuffer[40] = {0};
 	//Store inference output on comparison buffer
 	inference_output[index] = inference_value[0];
 	time = (inference_time / HAL_RCC_GetHCLKFreq()) * 1000000;
-	appDisplayInference(inference_value[0], expected_output[index], time);
-	CDC_Transmit_HS((uint8_t *)"Inference ended!\n\r", 18);
+//	appDisplayInference(inference_value[0], expected_output[index], time);
+	sprintf(txBuffer, "Expected: %.3f\n\rInference: %.3f\n\r", expected_output[index], inference_value[0]);
+	CDC_Transmit_HS(txBuffer, 40);
 	return 0;
 }
 
@@ -261,13 +263,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint32_t ticks = DWT->CYCCNT;
-  appInitLCD();
+//  appInitLCD();
   HAL_Delay(1500);
-  LCD_SetBrightness(0);
-  ST7735_FillRect(&st7735_pObj, 0,0, ST7735Ctx.Width, 80, BLACK);
-  uint8_t text[] = "Hello world!";
-  sprintf((char *)&text, "Device took %03d ms to boot!", ((HAL_GetTick() - ticks)));
-  LCD_ShowString(4, 4, 160, 16, 16, text);
+//  LCD_SetBrightness(0);
+//  ST7735_FillRect(&st7735_pObj, 0,0, ST7735Ctx.Width, 80, BLACK);
+//  uint8_t text[] = "Hello world!";
+//  sprintf((char *)&text, "Device took %03d ms to boot!", ((HAL_GetTick() - ticks)));
+//  LCD_ShowString(4, 4, 160, 16, 16, text);
 
   aiInit();
   while (1)
