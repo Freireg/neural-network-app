@@ -205,11 +205,13 @@ int aiPreProcess(ai_float* input_array, int index) {
 int aiPostProcess(ai_float* inference_value, int index, float inference_time) {
 //	float convertToUS = (inference_time / HAL_RCC_GetHCLKFreq()) * 1000000;
 	float time = 0;
+  uint8_t txBuffer[40] = {0};
 	//Store inference output on comparison buffer
 	inference_output[index] = inference_value[0];
 	time = (inference_time / HAL_RCC_GetHCLKFreq()) * 1000000;
 	appDisplayInference(inference_value[0], expected_output[index], time);
-	CDC_Transmit_HS((uint8_t *)"Inference ended!\n\r", 18);
+  sprintf(txBuffer, "Expected: %.3f\n\rInference: %.3f\n\r", expected_output[index], inference_value[0]);
+	CDC_Transmit_HS(txBuffer, 40);
 	return 0;
 }
 
